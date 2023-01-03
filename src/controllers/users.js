@@ -34,9 +34,9 @@ const signUpUser = async (req, res) => {
         if (emailExists) {
             return res.status(400).json(messageError.userExists);
         }
-
+        
         const encryptedPassword = await bcrypt.hash(password.trim(), 10);
-
+        
         const addedUser = await usersModel.insertUser(name, email, encryptedPassword);
         if (!addedUser.length) {
             return res.status(400).json(messageError.userSignupFailed);
