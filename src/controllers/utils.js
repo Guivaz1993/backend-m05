@@ -5,9 +5,9 @@ const messageSuccess = require('../messages/successToast');
 
 const wakeUp = async (req, res) => {
     try {
-        res.status(200).json(messageSuccess.welcome)
+        return res.status(200).json(messageSuccess.welcome)
     } catch (error) {
-        res.stats(500).json(error.message)
+        return res.status(500).json(error.message)
     }
 }
 
