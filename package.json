@@ -29,5 +29,8 @@
     "pg": "^8.7.3",
     "yup": "^0.32.11",
     "yup-locales": "^1.2.4"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }
