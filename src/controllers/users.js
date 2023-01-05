@@ -18,7 +18,6 @@ const verifyEmail = async (req, res) => {
 
 
     const emailExists = await usersService.emailExists(usersModel,email)
-    // const emailExists = await usersModel.emailExists(email);
     if (emailExists) {
       return res.status(400).json(messageError.userExists);
     }
@@ -33,17 +32,17 @@ const signUpUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
     await usersSchema.signUpUser.validate(req.body);
-    const emailExists = await usersModel.emailExists(email);
+    const emailExists = await usersService.emailExists(usersModel,email);
     if (emailExists) {
       return res.status(400).json(messageError.userExists);
     }
 
     const encryptedPassword = await bcrypt.hash(password.trim(), 10);
 
-    const addedUser = await usersModel.insertUser(
+    const addedUser = await usersService.insertUser(usersModel,{
       name,
       email,
-      encryptedPassword
+      encryptedPassword}
     );
     if (!addedUser.length) {
       return res.status(400).json(messageError.userSignupFailed);
@@ -61,7 +60,7 @@ const keepNameOfUser = async (req, res) => {
   try {
     await usersSchema.emailFromParams.validate({ email });
 
-    const nameUser = await usersModel.getNameUser(email);
+    const nameUser = await usersService.getNameUser(usersModel,email);
     if (!nameUser) {
       return res.status(500).json(messageError.nameNotFound);
     }
@@ -77,7 +76,7 @@ const login = async (req, res) => {
 
   try {
     await usersSchema.loginSchema.validate({ email, password });
-    const user = await usersModel.userEmail(email);
+    const user = await usersService.userEmail(usersModel,email);
     if (!user) {
       return res.status(404).json(messageError.loginError);
     }
@@ -110,10 +109,9 @@ const userData = async (req, res) => {
 const updateUser = async (req, res) => {
   let { name, email, password, cpf, phone } = req.body;
   const { id } = req.user;
-
   try {
     await usersSchema.editUser.validate(req.body);
-    const userExist = await usersModel.userExists(id);
+    const userExist = await usersService.userExists(usersModel,id);
     if (!userExist) {
       return res.status(404).json(messageError.userNotFound);
     }
@@ -123,20 +121,20 @@ const updateUser = async (req, res) => {
     }
 
     if (email && email !== req.user.email) {
-      const emailExists = await usersModel.emailExists(email);
+      const emailExists = await usersService.emailExists(usersModel,email);
 
       if (emailExists) {
         return res.status(404).json(messageError.userExists);
       }
     }
 
-    const userUpdated = await usersModel.updateUser(
+    const userUpdated = await usersService.updateUser(usersModel,{
       id,
       name,
       email,
       password,
       cpf,
-      phone
+      phone}
     );
     if (!userUpdated) {
       return res.status(400).json(messageError.userUpdate);

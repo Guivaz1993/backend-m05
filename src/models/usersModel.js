@@ -23,7 +23,7 @@ const insertUser = async (name, email, encryptedPassword) => {
 };
 
 const getNameUser = async (email) => {
-    const nameUser = await knex('users').select('name').where({ email });
+    const nameUser = await knex('users').select('name').where({ email }).first();
     return nameUser;
 };
 
